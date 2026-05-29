@@ -1,0 +1,144 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+}
+
+/* TITLE */
+
+.dashboard-title {
+    text-align: center;
+    font-size: 38px;
+    margin-bottom: 40px;
+    color: #f8fafc;
+}
+
+/* KPI SECTION */
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: linear-gradient(
+        145deg,
+        #1e293b,
+        #111827
+    );
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    box-shadow:
+        0px 10px 25px rgba(0,0,0,0.4);
+
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+}
+
+.card h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #cbd5e1;
+}
+
+.card p {
+    font-size: 36px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+/* CHART CONTAINERS */
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.chart-container {
+    background: #111827;
+    border-radius: 18px;
+    padding: 20px;
+
+    box-shadow:
+        0px 10px 25px rgba(0,0,0,0.4);
+}
+
+/* LARGE CHART */
+
+.large-chart {
+    grid-column: span 2;
+}
+
+/* EXECUTIVE SUMMARY */
+
+.summary-box {
+    background: linear-gradient(
+        145deg,
+        #1e293b,
+        #111827
+    );
+
+    margin-top: 40px;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0px 10px 25px rgba(0,0,0,0.4);
+}
+
+.summary-box h2 {
+    margin-bottom: 20px;
+    color: #38bdf8;
+}
+
+.summary-box p {
+    line-height: 1.8;
+    color: #e2e8f0;
+}
+
+/* BUTTONS */
+
+.button-container {
+    margin-top: 30px;
+
+    display: flex;
+    gap: 20px;
+}
+
+.download-btn {
+
+    background: #2563eb;
+    color: white;
+
+    padding: 14px 24px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    transition: 0.3s;
+}
+
+.download-btn:hover {
+    background: #1d4ed8;
+}

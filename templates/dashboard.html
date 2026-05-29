@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Analytics Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <h1 class="dashboard-title">
+        AI Productivity Analytics Portal
+    </h1>
+
+
+    <!-- KPI CARDS -->
+
+    <div class="cards-container">
+
+        <div class="card">
+            <h2>Total Tasks</h2>
+            <p>115</p>
+        </div>
+
+        <div class="card">
+            <h2>Completed</h2>
+            <p>80</p>
+        </div>
+
+        <div class="card">
+            <h2>Pending</h2>
+            <p>20</p>
+        </div>
+
+        <div class="card">
+            <h2>Team Efficiency</h2>
+            <p>92%</p>
+        </div>
+
+    </div>
+
+
+    <!-- CHART SECTION -->
+
+    <div class="chart-grid">
+
+        <div class="chart-container">
+            {{ task_chart|safe }}
+        </div>
+
+        <div class="chart-container">
+            {{ employee_chart|safe }}
+        </div>
+
+        <div class="chart-container large-chart">
+            {{ productivity_chart|safe }}
+        </div>
+
+    </div>
+
+
+    <!-- EXECUTIVE SUMMARY -->
+
+    <div class="summary-box">
+
+        <h2>Executive Summary</h2>
+
+        <p>
+            {{ summary }}
+        </p>
+
+    </div>
+
+
+    <!-- DOWNLOAD BUTTONS -->
+
+    <div class="button-container">
+
+        <a href="#" class="download-btn">
+            Download PDF
+        </a>
+
+        <a href="#" class="download-btn">
+            Download DOCX
+        </a>
+
+    </div>
+
+</body>
+
+</html>

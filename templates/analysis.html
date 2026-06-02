@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dataset Analysis</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<h1 class="dashboard-title">
+    Dataset Analysis Report
+</h1>
+
+<div class="summary-box">
+
+    <h2>Dataset Overview</h2>
+
+    <p><b>Rows:</b> {{ profile.rows }}</p>
+
+    <p><b>Columns:</b> {{ profile.columns }}</p>
+
+    <p><b>Missing Values:</b> {{ profile.missing_values }}</p>
+
+    <p><b>Duplicates:</b> {{ profile.duplicates }}</p>
+
+</div>
+
+<div class="summary-box">
+
+    <h2>Columns</h2>
+
+    <p>{{ profile.column_names }}</p>
+
+</div>
+
+<div class="summary-box">
+
+    <h2>Numeric Columns</h2>
+
+    <p>{{ profile.numeric_columns }}</p>
+
+</div>
+
+<div class="summary-box">
+
+    <h2>Text Columns</h2>
+
+    <p>{{ profile.text_columns }}</p>
+
+</div>
+
+<a href="/" class="download-btn">
+    Back To Dashboard
+</a>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Dataset Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <h1 class="dashboard-title">
+        AI Dataset Analyzer
+    </h1>
+
+    <div class="summary-box">
+
+        <h2>Upload Dataset</h2>
+
+        <p>
+            Upload CSV or Excel datasets for
+            automatic analysis, visualization,
+            reporting and AI-generated insights.
+        </p>
+
+        <br>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <input
+                type="file"
+                name="dataset"
+                required
+            >
+
+            <br><br>
+
+            <button
+                type="submit"
+                class="download-btn"
+            >
+                Analyze Dataset
+            </button>
+
+        </form>
+
+        <br>
+
+        <a
+            href="/"
+            class="download-btn"
+        >
+            Back To Dashboard
+        </a>
+
+    </div>
+
+</body>
+
+</html>

@@ -53,10 +53,56 @@
     <p>{{ profile.text_columns }}</p>
 
 </div>
+<div class="summary-box">
 
+    <h2>Statistics</h2>
+
+    {% for column, values in statistics.items() %}
+
+        <h3>{{ column }}</h3>
+
+        <p>Average: {{ values.mean }}</p>
+
+        <p>Maximum: {{ values.max }}</p>
+
+        <p>Minimum: {{ values.min }}</p>
+
+        <p>Total: {{ values.sum }}</p>
+
+        <hr>
+
+    {% endfor %}
+
+</div>
+<div class="summary-box">
+
+    <h2>Executive Summary</h2>
+
+    <p>
+        {{ summary }}
+    </p>
+
+</div>
+<div class="summary-box">
+
+    <h2>Dynamic Visualization</h2>
+
+    {{ chart|safe }}
+
+</div>
 <a href="/" class="download-btn">
     Back To Dashboard
 </a>
+<br>
 
+<a href="/download/pdf"
+   class="download-btn">
+   Download PDF
+</a>
+
+<a href="/download/docx"
+   class="download-btn">
+   Download DOCX
+</a>
 </body>
 </html>

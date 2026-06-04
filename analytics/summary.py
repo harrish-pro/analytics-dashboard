@@ -1,30 +1,19 @@
-from analytics.data import (
-    tasks_data,
-    employee_performance
-)
+def generate_summary(profile, statistics):
 
-def generate_summary():
+    summary = []
 
-    completed = tasks_data["Completed"]
-    pending = tasks_data["Pending"]
-
-    top_employee = max(
-        employee_performance,
-        key=employee_performance.get
+    summary.append(
+        f"The dataset contains {profile['rows']} rows and {profile['columns']} columns."
     )
 
-    summary = f"""
-    This week's productivity analytics show strong
-    task completion performance across the company.
+    summary.append(
+        f"There are {profile['missing_values']} missing values and {profile['duplicates']} duplicate records."
+    )
 
-    Total completed tasks reached {completed},
-    while only {pending} tasks remain pending.
+    for column, values in statistics.items():
 
-    Employee performance metrics indicate that
-    {top_employee} achieved the highest productivity score.
+        summary.append(
+            f"{column} has an average value of {values['mean']} and a maximum value of {values['max']}."
+        )
 
-    Overall workflow efficiency remains stable
-    with positive team engagement.
-    """
-
-    return summary
+    return " ".join(summary)

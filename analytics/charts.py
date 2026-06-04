@@ -1,70 +1,74 @@
 import plotly.express as px
 
-from analytics.data import (
-    tasks_data,
-    weekly_productivity,
-    employee_performance
-)
 
+def generate_chart(df):
 
-# PIE CHART
-
-def create_task_chart():
-
-    fig = px.pie(
-        names=list(tasks_data.keys()),
-        values=list(tasks_data.values()),
-        title="Task Status Overview",
-        hole=0.4
+    numeric_columns = list(
+        df.select_dtypes(include="number").columns
     )
 
-    fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#111827",
-        plot_bgcolor="#111827",
-        font=dict(color="white")
+    text_columns = list(
+        df.select_dtypes(include="object").columns
     )
+
+    if len(numeric_columns) == 0:
+        return None
+
+    if len(text_columns) > 0:
+
+        x_col = text_columns[0]
+        y_col = numeric_columns[0]
+
+        fig = px.bar(
+            df,
+            x=x_col,
+            y=y_col,
+            title=f"{y_col} by {x_col}"
+        )
+
+    else:
+
+        y_col = numeric_columns[0]
+
+        fig = px.histogram(
+            df,
+            x=y_col,
+            title=f"Distribution of {y_col}"
+        )
 
     return fig.to_html(full_html=False)
 
 
-# LINE CHART
+def save_chart_image(df):
 
-def create_productivity_chart():
-
-    fig = px.line(
-        x=list(weekly_productivity.keys()),
-        y=list(weekly_productivity.values()),
-        title="Weekly Productivity",
-        markers=True
+    numeric_columns = list(
+        df.select_dtypes(include="number").columns
     )
 
-    fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#111827",
-        plot_bgcolor="#111827",
-        font=dict(color="white")
+    text_columns = list(
+        df.select_dtypes(include="object").columns
     )
 
-    return fig.to_html(full_html=False)
+    if len(numeric_columns) == 0:
+        return None
 
+    if len(text_columns) > 0:
 
-# BAR CHART
+        fig = px.bar(
+            df,
+            x=text_columns[0],
+            y=numeric_columns[0]
+        )
 
-def create_employee_chart():
+    else:
 
-    fig = px.bar(
-        x=list(employee_performance.keys()),
-        y=list(employee_performance.values()),
-        title="Employee Performance",
-        text_auto=True
-    )
+        fig = px.histogram(
+            df,
+            x=numeric_columns[0]
+        )
 
-    fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#111827",
-        plot_bgcolor="#111827",
-        font=dict(color="white")
-    )
+    image_path = "report_images/chart.png"
 
-    return fig.to_html(full_html=False)
+    fig.write_image(image_path)
+
+    return image_path

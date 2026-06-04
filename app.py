@@ -7,23 +7,43 @@ from flask import (
 
 import os
 
-from analytics.charts import (
-    create_task_chart,
-    create_productivity_chart,
-    create_employee_chart
-)
-
-from analytics.summary import generate_summary
-from analytics.dataset_profile import create_dataset_profile
-from analytics.pdf_report import create_pdf_report
-
-from analytics.docx_report import create_docx_report
 from analytics.data_loader import load_data
 from analytics.data_cleaner import clean_data
-from analytics.analyzer import dataset_summary
-from analytics.insight_engine import generate_insights
+
+from analytics.dataset_profile import (
+    create_dataset_profile
+)
+
+from analytics.statistics_engine import (
+    generate_statistics
+)
+
+from analytics.summary import (
+    generate_summary
+)
+
+from analytics.charts import (
+    generate_chart,
+    save_chart_image
+)
+
+from analytics.report_data import (
+    prepare_report_data
+)
+
+from analytics.pdf_report import (
+    create_pdf_report
+)
+
+from analytics.docx_report import (
+    create_docx_report
+)
 
 app = Flask(__name__)
+
+# STORE LATEST ANALYSIS
+
+latest_report_data = {}
 
 # CREATE REQUIRED FOLDERS
 
@@ -31,25 +51,13 @@ os.makedirs("uploads", exist_ok=True)
 os.makedirs("reports", exist_ok=True)
 
 
-# DASHBOARD
+# HOME PAGE
 
 @app.route("/")
 def home():
 
-    task_chart = create_task_chart()
-
-    productivity_chart = create_productivity_chart()
-
-    employee_chart = create_employee_chart()
-
-    summary = generate_summary()
-
     return render_template(
-        "dashboard.html",
-        task_chart=task_chart,
-        productivity_chart=productivity_chart,
-        employee_chart=employee_chart,
-        summary=summary
+        "dashboard.html"
     )
 
 
@@ -58,9 +66,17 @@ def home():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_dataset():
 
+    global latest_report_data
+
     if request.method == "POST":
 
+        if "dataset" not in request.files:
+            return "No file uploaded"
+
         file = request.files["dataset"]
+
+        if file.filename == "":
+            return "No file selected"
 
         file_path = os.path.join(
             "uploads",
@@ -69,18 +85,57 @@ def upload_dataset():
 
         file.save(file_path)
 
+        # LOAD DATA
+
         df = load_data(file_path)
+
+        # CLEAN DATA
 
         df = clean_data(df)
 
+        # DATASET PROFILE
+
         profile = create_dataset_profile(df)
+
+        # STATISTICS
+
+        statistics = generate_statistics(df)
+
+        # SUMMARY
+
+        summary = generate_summary(
+            profile,
+            statistics
+        )
+
+        # CHART
+
+        chart = generate_chart(df)
+
+        # SAVE CHART IMAGE
+
+        chart_image = save_chart_image(df)
+
+        # STORE REPORT DATA
+
+        latest_report_data = prepare_report_data(
+            profile,
+            statistics,
+            summary,
+            chart_image
+        )
 
         return render_template(
             "analysis.html",
-            profile=profile
+            profile=profile,
+            statistics=statistics,
+            summary=summary,
+            chart=chart
         )
 
-    return render_template("upload.html")
+    return render_template(
+        "upload.html"
+    )
 
 
 # PDF DOWNLOAD
@@ -90,10 +145,13 @@ def download_pdf():
 
     file_path = os.path.join(
         "reports",
-        "analytics_report.pdf"
+        "report.pdf"
     )
 
-    create_pdf_report(file_path)
+    create_pdf_report(
+        latest_report_data,
+        file_path
+    )
 
     return send_file(
         file_path,
@@ -108,10 +166,13 @@ def download_docx():
 
     file_path = os.path.join(
         "reports",
-        "analytics_report.docx"
+        "report.docx"
     )
 
-    create_docx_report(file_path)
+    create_docx_report(
+        latest_report_data,
+        file_path
+    )
 
     return send_file(
         file_path,

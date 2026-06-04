@@ -1,20 +1,14 @@
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
-    Spacer
+    Spacer,
+    Image
 )
 
 from reportlab.lib.styles import getSampleStyleSheet
 
-from analytics.data import (
-    tasks_data,
-    employee_performance
-)
 
-from analytics.summary import generate_summary
-
-
-def create_pdf_report(file_path):
+def create_pdf_report(report_data, file_path):
 
     doc = SimpleDocTemplate(file_path)
 
@@ -22,75 +16,185 @@ def create_pdf_report(file_path):
 
     elements = []
 
+    profile = report_data["profile"]
+    statistics = report_data["statistics"]
+    summary = report_data["summary"]
+
     # TITLE
 
-    title = Paragraph(
-        "AI Productivity Analytics Report",
-        styles['Title']
+    elements.append(
+        Paragraph(
+            "AI ANALYTICS REPORT",
+            styles["Title"]
+        )
     )
-
-    elements.append(title)
 
     elements.append(Spacer(1, 20))
-
-
-    # TASK DATA
-
-    completed = tasks_data["Completed"]
-    pending = tasks_data["Pending"]
-    progress = tasks_data["In Progress"]
-
-    task_text = f"""
-    <b>Task Analytics</b><br/><br/>
-
-    Completed Tasks: {completed}<br/>
-    Pending Tasks: {pending}<br/>
-    Tasks In Progress: {progress}
-    """
-
-    task_paragraph = Paragraph(
-        task_text,
-        styles['BodyText']
-    )
-
-    elements.append(task_paragraph)
-
-    elements.append(Spacer(1, 20))
-
-
-    # TOP EMPLOYEE
-
-    top_employee = max(
-        employee_performance,
-        key=employee_performance.get
-    )
-
-    employee_text = f"""
-    <b>Top Performing Employee</b><br/><br/>
-
-    {top_employee} achieved the highest
-    productivity score this week.
-    """
-
-    employee_paragraph = Paragraph(
-        employee_text,
-        styles['BodyText']
-    )
-
-    elements.append(employee_paragraph)
-
-    elements.append(Spacer(1, 20))
-
 
     # EXECUTIVE SUMMARY
 
-    summary = generate_summary()
-
-    summary_paragraph = Paragraph(
-        f"<b>Executive Summary</b><br/><br/>{summary}",
-        styles['BodyText']
+    elements.append(
+        Paragraph(
+            "1. Executive Summary",
+            styles["Heading1"]
+        )
     )
 
-    elements.append(summary_paragraph)
+    elements.append(
+        Paragraph(
+            summary,
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # DATASET OVERVIEW
+
+    elements.append(
+        Paragraph(
+            "2. Dataset Overview",
+            styles["Heading1"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"""
+            Total Rows: {profile['rows']}<br/>
+            Total Columns: {profile['columns']}<br/>
+            Missing Values: {profile['missing_values']}<br/>
+            Duplicate Records: {profile['duplicates']}
+            """,
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # COLUMN ANALYSIS
+
+    elements.append(
+        Paragraph(
+            "3. Column Analysis",
+            styles["Heading1"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Columns: {', '.join(profile['column_names'])}",
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Numeric Columns: {', '.join(profile['numeric_columns'])}",
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Text Columns: {', '.join(profile['text_columns'])}",
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # STATISTICS
+
+    elements.append(
+        Paragraph(
+            "4. Statistical Analysis",
+            styles["Heading1"]
+        )
+    )
+
+    for column, values in statistics.items():
+
+        elements.append(
+            Paragraph(
+                f"""
+                <b>{column}</b><br/>
+                Average: {values['mean']}<br/>
+                Maximum: {values['max']}<br/>
+                Minimum: {values['min']}<br/>
+                Total: {values['sum']}
+                """,
+                styles["BodyText"]
+            )
+        )
+
+        elements.append(Spacer(1, 10))
+
+    # DATA QUALITY
+
+    elements.append(
+        Paragraph(
+            "5. Data Quality Assessment",
+            styles["Heading1"]
+        )
+    )
+
+    quality_text = f"""
+    Missing Values Found: {profile['missing_values']}<br/>
+    Duplicate Records Found: {profile['duplicates']}
+    """
+
+    elements.append(
+        Paragraph(
+            quality_text,
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # VISUAL ANALYTICS
+
+    if "chart_image" in report_data:
+
+        elements.append(
+            Paragraph(
+                "6. Visual Analytics",
+                styles["Heading1"]
+            )
+        )
+
+        elements.append(
+            Image(
+                report_data["chart_image"],
+                width=450,
+                height=250
+            )
+        )
+
+        elements.append(Spacer(1, 20))
+
+    # RECOMMENDATIONS
+
+    elements.append(
+        Paragraph(
+            "7. Recommendations",
+            styles["Heading1"]
+        )
+    )
+
+    recommendations = """
+    • Review missing values before making decisions.<br/>
+    • Validate duplicate records regularly.<br/>
+    • Focus on high-performing metrics identified in analysis.<br/>
+    • Monitor trends using generated dashboards.<br/>
+    """
+
+    elements.append(
+        Paragraph(
+            recommendations,
+            styles["BodyText"]
+        )
+    )
 
     doc.build(elements)

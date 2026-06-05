@@ -11,11 +11,93 @@
 </head>
 
 <body>
+<div class="kpi-grid">
+
+    <div class="kpi-card">
+        <h3>Rows</h3>
+        <h1>{{ profile.rows }}</h1>
+    </div>
+
+    <div class="kpi-card">
+        <h3>Columns</h3>
+        <h1>{{ profile.columns }}</h1>
+    </div>
+
+    <div class="kpi-card">
+        <h3>Missing Values</h3>
+        <h1>{{ profile.missing_values }}</h1>
+    </div>
+
+    <div class="kpi-card">
+        <h3>Duplicates</h3>
+        <h1>{{ profile.duplicates }}</h1>
+    </div>
+
+    <div class="kpi-card">
+        <h3>Health Score</h3>
+        <h1>{{ health_score }}%</h1>
+    </div>
+
+</div>
 
 <h1 class="dashboard-title">
     Dataset Analysis Report
 </h1>
 
+<h2>Correlation Analysis</h2>
+
+{% if correlation is not none %}
+
+<div class="table-container">
+
+    <table>
+
+        <tr>
+
+            <th>Metric</th>
+
+            {% for col in correlation.columns %}
+            <th>{{ col }}</th>
+            {% endfor %}
+
+        </tr>
+
+        {% for row in correlation.index %}
+
+        <tr>
+
+            <td>{{ row }}</td>
+
+            {% for value in correlation.loc[row] %}
+            <td>{{ value }}</td>
+            {% endfor %}
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+{% else %}
+
+<p>
+Not enough numeric columns for correlation analysis.
+</p>
+
+{% endif %}
+<h2>AI Business Insights</h2>
+
+<div class="insight-box">
+
+{% for insight in insights %}
+
+<p>• {{ insight }}</p>
+
+{% endfor %}
+
+</div>
 <div class="summary-box">
 
     <h2>Dataset Overview</h2>
@@ -83,13 +165,15 @@
     </p>
 
 </div>
-<div class="summary-box">
+<h2>Analytics Dashboard</h2>
 
-    <h2>Dynamic Visualization</h2>
+{% for chart in charts %}
 
+<div class="chart-card">
     {{ chart|safe }}
-
 </div>
+
+{% endfor %}
 <a href="/" class="download-btn">
     Back To Dashboard
 </a>

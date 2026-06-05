@@ -23,8 +23,7 @@ from analytics.summary import (
 )
 
 from analytics.charts import (
-    generate_chart,
-    save_chart_image
+    generate_charts
 )
 
 from analytics.report_data import (
@@ -37,6 +36,22 @@ from analytics.pdf_report import (
 
 from analytics.docx_report import (
     create_docx_report
+)
+
+from analytics.analytics_score import (
+    calculate_health_score
+)
+
+from analytics.correlation import (
+    generate_correlation
+)
+
+from analytics.insights import (
+    generate_insights
+)
+
+from analytics.recommendations import (
+    generate_recommendations
 )
 
 app = Flask(__name__)
@@ -93,13 +108,38 @@ def upload_dataset():
 
         df = clean_data(df)
 
-        # DATASET PROFILE
+        # PROFILE
 
         profile = create_dataset_profile(df)
 
         # STATISTICS
 
         statistics = generate_statistics(df)
+
+        # CORRELATION
+
+        correlation = generate_correlation(df)
+
+        # HEALTH SCORE
+
+        health_score = calculate_health_score(
+            profile
+        )
+
+        # INSIGHTS
+
+        insights = generate_insights(
+            profile,
+            statistics,
+            correlation
+        )
+
+        # RECOMMENDATIONS
+
+        recommendations = generate_recommendations(
+            profile,
+            health_score
+        )
 
         # SUMMARY
 
@@ -108,13 +148,14 @@ def upload_dataset():
             statistics
         )
 
-        # CHART
+        # CHARTS
 
-        chart = generate_chart(df)
+        charts = generate_charts(df)
 
-        # SAVE CHART IMAGE
-
-        chart_image = save_chart_image(df)
+        print(
+            "Number of charts:",
+            len(charts)
+        )
 
         # STORE REPORT DATA
 
@@ -122,7 +163,9 @@ def upload_dataset():
             profile,
             statistics,
             summary,
-            chart_image
+            health_score,
+            insights,
+            recommendations
         )
 
         return render_template(
@@ -130,7 +173,11 @@ def upload_dataset():
             profile=profile,
             statistics=statistics,
             summary=summary,
-            chart=chart
+            charts=charts,
+            health_score=health_score,
+            correlation=correlation,
+            insights=insights,
+            recommendations=recommendations
         )
 
     return render_template(
@@ -143,9 +190,14 @@ def upload_dataset():
 @app.route("/download/pdf")
 def download_pdf():
 
+    global latest_report_data
+
+    if not latest_report_data:
+        return "Please upload a dataset first."
+
     file_path = os.path.join(
         "reports",
-        "report.pdf"
+        "analytics_report.pdf"
     )
 
     create_pdf_report(
@@ -164,9 +216,14 @@ def download_pdf():
 @app.route("/download/docx")
 def download_docx():
 
+    global latest_report_data
+
+    if not latest_report_data:
+        return "Please upload a dataset first."
+
     file_path = os.path.join(
         "reports",
-        "report.docx"
+        "analytics_report.docx"
     )
 
     create_docx_report(
@@ -181,4 +238,7 @@ def download_docx():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+        debug=True
+    )

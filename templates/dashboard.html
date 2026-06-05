@@ -3,97 +3,70 @@
 
 <head>
 
-    <title>AI Analytics Dashboard</title>
+    <title>AI Analytics Platform</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
 <body>
 
-    <h1 class="dashboard-title">
-        AI Productivity Analytics Portal
+<div class="container">
+
+    <h1 class="title">
+        AI Analytics Platform
     </h1>
 
+    <div class="hero">
 
-    <!-- KPI CARDS -->
-
-    <div class="cards-container">
-
-        <div class="card">
-            <h2>Total Tasks</h2>
-            <p>115</p>
-        </div>
-
-        <div class="card">
-            <h2>Completed</h2>
-            <p>80</p>
-        </div>
-
-        <div class="card">
-            <h2>Pending</h2>
-            <p>20</p>
-        </div>
-
-        <div class="card">
-            <h2>Team Efficiency</h2>
-            <p>92%</p>
-        </div>
-
-    </div>
-
-
-    <!-- CHART SECTION -->
-
-    <div class="chart-grid">
-
-        <div class="chart-container">
-            {{ task_chart|safe }}
-        </div>
-
-        <div class="chart-container">
-            {{ employee_chart|safe }}
-        </div>
-
-        <div class="chart-container large-chart">
-            {{ productivity_chart|safe }}
-        </div>
-
-    </div>
-
-
-    <!-- EXECUTIVE SUMMARY -->
-
-    <div class="summary-box">
-
-        <h2>Executive Summary</h2>
+        <h2>
+            Upload Any Dataset
+        </h2>
 
         <p>
-            {{ summary }}
+            Automatic Analytics • Statistics • Charts • Reports
         </p>
 
+        <a href="/upload" class="btn">
+            Start Analysis
+        </a>
+
     </div>
 
-<div class="button-container">
+    <div class="features">
 
-    <a href="/upload" class="download-btn">
-        Upload Dataset
-    </a>
+        <div class="card">
+            <h3>Dataset Profiling</h3>
+            <p>
+                Automatic row, column and quality analysis.
+            </p>
+        </div>
 
-    <a href="/download/pdf" class="download-btn">
-        Download PDF
-    </a>
+        <div class="card">
+            <h3>Dynamic Charts</h3>
+            <p>
+                Automatic visualizations from uploaded datasets.
+            </p>
+        </div>
 
-    <a href="/download/docx" class="download-btn">
-        Download DOCX
-    </a>
+        <div class="card">
+            <h3>Executive Summary</h3>
+            <p>
+                AI-generated business insights.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Export Reports</h3>
+            <p>
+                Download PDF and DOCX reports.
+            </p>
+        </div>
+
+    </div>
 
 </div>
-    </div>
 
 </body>
-
 </html>

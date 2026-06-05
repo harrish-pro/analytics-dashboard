@@ -5,10 +5,15 @@ from reportlab.platypus import (
     Image
 )
 
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import (
+    getSampleStyleSheet
+)
 
 
-def create_pdf_report(report_data, file_path):
+def create_pdf_report(
+    report_data,
+    file_path
+):
 
     doc = SimpleDocTemplate(file_path)
 
@@ -20,22 +25,30 @@ def create_pdf_report(report_data, file_path):
     statistics = report_data["statistics"]
     summary = report_data["summary"]
 
+    health_score = report_data["health_score"]
+
+    insights = report_data["insights"]
+
+    recommendations = report_data["recommendations"]
+
     # TITLE
 
     elements.append(
         Paragraph(
-            "AI ANALYTICS REPORT",
+            "AI Analytics Report",
             styles["Title"]
         )
     )
 
-    elements.append(Spacer(1, 20))
+    elements.append(
+        Spacer(1, 20)
+    )
 
     # EXECUTIVE SUMMARY
 
     elements.append(
         Paragraph(
-            "1. Executive Summary",
+            "Executive Summary",
             styles["Heading1"]
         )
     )
@@ -47,13 +60,35 @@ def create_pdf_report(report_data, file_path):
         )
     )
 
-    elements.append(Spacer(1, 20))
+    elements.append(
+        Spacer(1, 20)
+    )
+
+    # HEALTH SCORE
+
+    elements.append(
+        Paragraph(
+            "Dataset Health Score",
+            styles["Heading1"]
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"{health_score}%",
+            styles["BodyText"]
+        )
+    )
+
+    elements.append(
+        Spacer(1, 20)
+    )
 
     # DATASET OVERVIEW
 
     elements.append(
         Paragraph(
-            "2. Dataset Overview",
+            "Dataset Overview",
             styles["Heading1"]
         )
     )
@@ -61,54 +96,24 @@ def create_pdf_report(report_data, file_path):
     elements.append(
         Paragraph(
             f"""
-            Total Rows: {profile['rows']}<br/>
-            Total Columns: {profile['columns']}<br/>
+            Rows: {profile['rows']}<br/>
+            Columns: {profile['columns']}<br/>
             Missing Values: {profile['missing_values']}<br/>
-            Duplicate Records: {profile['duplicates']}
+            Duplicates: {profile['duplicates']}
             """,
             styles["BodyText"]
         )
     )
 
-    elements.append(Spacer(1, 20))
-
-    # COLUMN ANALYSIS
-
     elements.append(
-        Paragraph(
-            "3. Column Analysis",
-            styles["Heading1"]
-        )
+        Spacer(1, 20)
     )
-
-    elements.append(
-        Paragraph(
-            f"Columns: {', '.join(profile['column_names'])}",
-            styles["BodyText"]
-        )
-    )
-
-    elements.append(
-        Paragraph(
-            f"Numeric Columns: {', '.join(profile['numeric_columns'])}",
-            styles["BodyText"]
-        )
-    )
-
-    elements.append(
-        Paragraph(
-            f"Text Columns: {', '.join(profile['text_columns'])}",
-            styles["BodyText"]
-        )
-    )
-
-    elements.append(Spacer(1, 20))
 
     # STATISTICS
 
     elements.append(
         Paragraph(
-            "4. Statistical Analysis",
+            "Statistical Analysis",
             styles["Heading1"]
         )
     )
@@ -128,73 +133,84 @@ def create_pdf_report(report_data, file_path):
             )
         )
 
-        elements.append(Spacer(1, 10))
+        elements.append(
+            Spacer(1, 10)
+        )
 
-    # DATA QUALITY
+    elements.append(
+        Spacer(1, 20)
+    )
+
+    # AI INSIGHTS
 
     elements.append(
         Paragraph(
-            "5. Data Quality Assessment",
+            "AI Business Insights",
             styles["Heading1"]
         )
     )
 
-    quality_text = f"""
-    Missing Values Found: {profile['missing_values']}<br/>
-    Duplicate Records Found: {profile['duplicates']}
-    """
-
-    elements.append(
-        Paragraph(
-            quality_text,
-            styles["BodyText"]
-        )
-    )
-
-    elements.append(Spacer(1, 20))
-
-    # VISUAL ANALYTICS
-
-    if "chart_image" in report_data:
+    for insight in insights:
 
         elements.append(
             Paragraph(
-                "6. Visual Analytics",
-                styles["Heading1"]
+                f"• {insight}",
+                styles["BodyText"]
             )
         )
 
-        elements.append(
-            Image(
-                report_data["chart_image"],
-                width=450,
-                height=250
-            )
-        )
-
-        elements.append(Spacer(1, 20))
+    elements.append(
+        Spacer(1, 20)
+    )
 
     # RECOMMENDATIONS
 
     elements.append(
         Paragraph(
-            "7. Recommendations",
+            "Recommendations",
             styles["Heading1"]
         )
     )
 
-    recommendations = """
-    • Review missing values before making decisions.<br/>
-    • Validate duplicate records regularly.<br/>
-    • Focus on high-performing metrics identified in analysis.<br/>
-    • Monitor trends using generated dashboards.<br/>
-    """
+    for recommendation in recommendations:
+
+        elements.append(
+            Paragraph(
+                f"• {recommendation}",
+                styles["BodyText"]
+            )
+        )
 
     elements.append(
-        Paragraph(
-            recommendations,
-            styles["BodyText"]
-        )
+        Spacer(1, 20)
     )
+
+    # CHART IMAGE (OPTIONAL)
+
+    if report_data.get("chart_image"):
+
+        try:
+
+            elements.append(
+                Paragraph(
+                    "Visual Analytics",
+                    styles["Heading1"]
+                )
+            )
+
+            elements.append(
+                Image(
+                    report_data["chart_image"],
+                    width=450,
+                    height=250
+                )
+            )
+
+            elements.append(
+                Spacer(1, 20)
+            )
+
+        except Exception:
+            pass
 
     doc.build(elements)

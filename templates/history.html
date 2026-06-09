@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Analytics History
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>
+        Analytics History
+    </h1>
+
+    <table>
+
+        <tr>
+
+            <th>Dataset</th>
+
+            <th>Rows</th>
+
+            <th>Columns</th>
+
+            <th>Health Score</th>
+
+            <th>Date</th>
+
+        </tr>
+
+        {% for record in records %}
+
+        <tr>
+
+            <td>{{ record.dataset }}</td>
+
+            <td>{{ record.rows }}</td>
+
+            <td>{{ record.columns }}</td>
+
+            <td>{{ record.health_score }}%</td>
+
+            <td>{{ record.date }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+</body>
+
+</html>

@@ -4,7 +4,8 @@ def prepare_report_data(
     summary,
     health_score,
     insights,
-    recommendations
+    recommendations,
+    chart_image
 ):
 
     return {
@@ -19,6 +20,8 @@ def prepare_report_data(
 
         "insights": insights,
 
-        "recommendations": recommendations
+        "recommendations": recommendations,
 
-    }   
+        "chart_image": chart_image
+
+    }

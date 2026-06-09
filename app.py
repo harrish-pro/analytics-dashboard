@@ -4,6 +4,7 @@ from flask import (
     send_file,
     request
 )
+from datetime import datetime
 
 import os
 
@@ -23,7 +24,8 @@ from analytics.summary import (
 )
 
 from analytics.charts import (
-    generate_charts
+    generate_charts,
+    save_chart_image
 )
 
 from analytics.report_data import (
@@ -53,12 +55,37 @@ from analytics.insights import (
 from analytics.recommendations import (
     generate_recommendations
 )
-
+from analytics.history_manager import (
+    save_analysis,
+    get_history
+)
+from analytics.comparison import (
+    compare_datasets
+)
+from analytics.trends import (
+    generate_trend_chart
+)
+from analytics.risk_detector import (
+    detect_dataset_risk
+)
+from analytics.scorecard import (
+    generate_scorecard
+)
+from analytics.chatbot import (
+    answer_question
+)
 app = Flask(__name__)
 
 # STORE LATEST ANALYSIS
 
 latest_report_data = {}
+latest_profile = {}
+
+latest_health_score = 0
+
+latest_risk_report = {}
+
+latest_scorecard = {}
 
 # CREATE REQUIRED FOLDERS
 
@@ -82,6 +109,14 @@ def home():
 def upload_dataset():
 
     global latest_report_data
+   
+    global latest_profile
+
+    global latest_health_score
+
+    global latest_risk_report
+
+    global latest_scorecard
 
     if request.method == "POST":
 
@@ -125,7 +160,19 @@ def upload_dataset():
         health_score = calculate_health_score(
             profile
         )
-
+        risk_report = detect_dataset_risk(
+    profile,
+    health_score
+)
+        scorecard = generate_scorecard(
+    health_score,
+    risk_report
+)
+        latest_profile = profile
+        latest_health_score = health_score
+        latest_risk_report = risk_report
+        latest_scorecard = scorecard
+         
         # INSIGHTS
 
         insights = generate_insights(
@@ -151,6 +198,7 @@ def upload_dataset():
         # CHARTS
 
         charts = generate_charts(df)
+        chart_image = save_chart_image(df)
 
         print(
             "Number of charts:",
@@ -165,8 +213,24 @@ def upload_dataset():
             summary,
             health_score,
             insights,
-            recommendations
+            recommendations,
+            chart_image
         )
+        save_analysis({
+
+    "dataset": file.filename,
+
+    "rows": profile["rows"],
+
+    "columns": profile["columns"],
+
+    "health_score": health_score,
+
+    "date": datetime.now().strftime(
+        "%Y-%m-%d %H:%M"
+    )
+
+})
 
         return render_template(
             "analysis.html",
@@ -177,13 +241,15 @@ def upload_dataset():
             health_score=health_score,
             correlation=correlation,
             insights=insights,
-            recommendations=recommendations
+            recommendations=recommendations,
+            risk_report=risk_report,
+            scorecard=scorecard
         )
 
     return render_template(
         "upload.html"
     )
-
+     
 
 # PDF DOWNLOAD
 
@@ -235,8 +301,80 @@ def download_docx():
         file_path,
         as_attachment=True
     )
+@app.route("/history")
+def history():
 
+    records = get_history()
 
+    return render_template(
+        "history.html",
+        records=records
+    )
+    
+    
+@app.route("/compare")
+def compare():
+
+    records = get_history()
+
+    if len(records) < 2:
+
+        return "Need at least 2 datasets"
+
+    dataset1 = records[-2]
+
+    dataset2 = records[-1]
+
+    comparison = compare_datasets(
+        dataset1,
+        dataset2
+    )
+
+    return render_template(
+        "compare.html",
+        dataset1=dataset1,
+        dataset2=dataset2,
+        comparison=comparison
+    )
+    
+@app.route("/trends")
+def trends():
+
+    records = get_history()
+
+    chart = generate_trend_chart(
+        records
+    )
+
+    return render_template(
+        "trends.html",
+        chart=chart
+    )
+    
+@app.route(
+    "/ask",
+    methods=["GET", "POST"]
+)
+def ask_ai():
+
+    answer = None
+
+    if request.method == "POST":
+
+        question = request.form["question"]
+
+        answer = answer_question(
+            question,
+            latest_profile,
+            latest_health_score,
+            latest_risk_report,
+            latest_scorecard
+        )
+
+    return render_template(
+        "chatbot.html",
+        answer=answer
+    )
 if __name__ == "__main__":
 
     app.run(

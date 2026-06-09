@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>
+AI Analytics Assistant
+</title>
+
+<link
+rel="stylesheet"
+href="{{ url_for(
+'static',
+filename='style.css'
+) }}"
+>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>
+AI Analytics Assistant
+</h1>
+
+<form method="POST">
+
+<input
+type="text"
+name="question"
+placeholder="Ask a question..."
+required
+>
+
+<button type="submit">
+
+Ask
+
+</button>
+
+</form>
+
+{% if answer %}
+
+<div class="insight-box">
+
+<p>{{ answer }}</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+
+</html>

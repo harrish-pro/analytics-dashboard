@@ -9,6 +9,8 @@ from reportlab.lib.styles import (
     getSampleStyleSheet
 )
 
+import os
+
 
 def create_pdf_report(
     report_data,
@@ -31,7 +33,13 @@ def create_pdf_report(
 
     recommendations = report_data["recommendations"]
 
+    chart_image = report_data.get(
+        "chart_image"
+    )
+
+    # ==========================
     # TITLE
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -44,7 +52,9 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
+    # ==========================
     # EXECUTIVE SUMMARY
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -64,7 +74,9 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
+    # ==========================
     # HEALTH SCORE
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -84,7 +96,9 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
+    # ==========================
     # DATASET OVERVIEW
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -109,7 +123,9 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
+    # ==========================
     # STATISTICS
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -141,7 +157,58 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
+    # ==========================
+    # VISUAL ANALYTICS
+    # ==========================
+
+    elements.append(
+        Paragraph(
+            "Visual Analytics",
+            styles["Heading1"]
+        )
+    )
+
+    if (
+        chart_image
+        and
+        os.path.exists(chart_image)
+    ):
+
+        try:
+
+            elements.append(
+                Image(
+                    chart_image,
+                    width=450,
+                    height=250
+                )
+            )
+
+        except Exception:
+
+            elements.append(
+                Paragraph(
+                    "Chart image could not be loaded.",
+                    styles["BodyText"]
+                )
+            )
+
+    else:
+
+        elements.append(
+            Paragraph(
+                "No chart available.",
+                styles["BodyText"]
+            )
+        )
+
+    elements.append(
+        Spacer(1, 20)
+    )
+
+    # ==========================
     # AI INSIGHTS
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -163,7 +230,9 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
+    # ==========================
     # RECOMMENDATIONS
+    # ==========================
 
     elements.append(
         Paragraph(
@@ -185,32 +254,15 @@ def create_pdf_report(
         Spacer(1, 20)
     )
 
-    # CHART IMAGE (OPTIONAL)
+    # ==========================
+    # REPORT GENERATED
+    # ==========================
 
-    if report_data.get("chart_image"):
-
-        try:
-
-            elements.append(
-                Paragraph(
-                    "Visual Analytics",
-                    styles["Heading1"]
-                )
-            )
-
-            elements.append(
-                Image(
-                    report_data["chart_image"],
-                    width=450,
-                    height=250
-                )
-            )
-
-            elements.append(
-                Spacer(1, 20)
-            )
-
-        except Exception:
-            pass
+    elements.append(
+        Paragraph(
+            "Report generated successfully using AI Analytics Dashboard.",
+            styles["Italic"]
+        )
+    )
 
     doc.build(elements)

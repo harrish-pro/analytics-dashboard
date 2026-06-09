@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        Analytics Trends
+    </title>
+
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static',
+    filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>
+        Analytics Trend Dashboard
+    </h1>
+
+    {% if chart %}
+
+        {{ chart|safe }}
+
+    {% else %}
+
+        <p>
+            No analytics history found.
+        </p>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

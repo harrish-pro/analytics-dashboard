@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Dataset Comparison</title>
+
+<link
+rel="stylesheet"
+href="{{ url_for('static',
+filename='style.css') }}"
+>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Dataset Comparison</h1>
+
+<table>
+
+<tr>
+<th>Metric</th>
+<th>{{ dataset1.dataset }}</th>
+<th>{{ dataset2.dataset }}</th>
+</tr>
+
+<tr>
+<td>Rows</td>
+<td>{{ dataset1.rows }}</td>
+<td>{{ dataset2.rows }}</td>
+</tr>
+
+<tr>
+<td>Columns</td>
+<td>{{ dataset1.columns }}</td>
+<td>{{ dataset2.columns }}</td>
+</tr>
+
+<tr>
+<td>Health Score</td>
+<td>{{ dataset1.health_score }}%</td>
+<td>{{ dataset2.health_score }}%</td>
+</tr>
+
+</table>
+
+<h2>Comparison Insights</h2>
+
+<p>
+Rows Difference:
+{{ comparison.rows_difference }}
+</p>
+
+<p>
+Columns Difference:
+{{ comparison.columns_difference }}
+</p>
+
+<p>
+Health Score Difference:
+{{ comparison.health_difference }}%
+</p>
+
+</div>
+
+</body>
+
+</html>
